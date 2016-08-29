@@ -38,10 +38,12 @@ def generateVCards(addresses):
         card.email.type_param = 'INTERNET'
 
         # Org (vader/moeder van ...)
-        ge = address.get('ge', '')
-        if ge and ge.lower() in 'mv':
+        if address.get('kind', ''):
+            ge = address.get('ge', '')
             card.add('org')
-            prefix = 'vader van' if ge.lower() == 'v' else 'moeder van'
+            prefix = 'ouder van'
+            if ge and ge.lower() in 'mv':
+                prefix = 'vader van' if ge.lower() == 'v' else 'moeder van'
             card.org.value = ['%s %s' % (prefix, address.get('kind'))]
 
         # Phone
@@ -67,8 +69,22 @@ def generateVCards(addresses):
         yield card
 
 
+def iterEmailAddresses(addresses):
+    for address in addresses:
+        parts = [address.get('naam', '')]
+        if address.get('kind', ''):
+            prefix = 'ouder van'
+            ge = address.get('ge', '')
+            if ge and ge.lower() in 'mv':
+                prefix = 'vader van' if ge.lower() == 'v' else 'moeder van'
+            parts.extend([prefix, address.get('kind')])
+        yield '%s <%s>,' % (' '.join(parts), address.get('email'))
+
+
 if __name__ == '__main__':
     filepath = sys.argv[1]
-    addresses = iterAddresses(filepath)
+    addresses = list(iterAddresses(filepath))
     vcfFilepath = filepath.rsplit('.', 1)[0] + '.vcf'
     print >> open(vcfFilepath, 'w'), ''.join(card.serialize().strip() for card in generateVCards(addresses))
+    mlFilepath = filepath.rsplit('.', 1)[0] + ' mailing list.txt'
+    print >> open(mlFilepath, 'w'), '\n'.join(iterEmailAddresses(addresses))
