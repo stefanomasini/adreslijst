@@ -78,7 +78,7 @@ def iterEmailAddresses(addresses):
             if ge and ge.lower() in 'mv':
                 prefix = 'vader van' if ge.lower() == 'v' else 'moeder van'
             parts.extend([prefix, address.get('kind')])
-        yield '%s <%s>,' % (' '.join(parts), address.get('email'))
+        yield ('%s <%s>,' % (' '.join(parts), address.get('email'))).strip()
 
 
 if __name__ == '__main__':
