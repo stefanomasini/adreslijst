@@ -14,3 +14,6 @@ Run with:
 
     ./process.sh /Users/stefano/Dropbox/Chiara\ Documenti/klaslijst\ kleuters.xls
     
+References:
+
+- https://en.wikipedia.org/wiki/VCard

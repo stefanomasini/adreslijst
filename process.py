@@ -50,6 +50,20 @@ def generateVCards(addresses):
             card.tel.value = address.get('telefoonnummer', '')
             card.tel.type_param = 'CELL'
 
+        # Address
+        if address.get('adres', '') or address.get('postcode', '') or address.get('stad', ''):
+            card.add('adr')
+            data = {}
+            for key, value in (
+                    ('street', address.get('adres', '')),
+                    ('code', address.get('postcode', '')),
+                    ('city', address.get('stad', '')),
+                ):
+                if value:
+                    data[key] = value
+            card.adr.value = vobject.vcard.Address(**data)
+            card.adr.type_param = 'HOME'
+
         yield card
 
 
